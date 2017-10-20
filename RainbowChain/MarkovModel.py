@@ -1,6 +1,6 @@
-from Dictogram import Dictogram
+from .Dictogram import Dictogram
 from collections import deque
-from FileParser import FileParser
+from .FileParser import FileParser
 
 
 class MarkovModel:

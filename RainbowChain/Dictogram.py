@@ -1,9 +1,8 @@
 import random
 import pickle
 
-from Histogram import Histogram
+from .Histogram import Histogram
 from collections import deque
-from FileParser import FileParser
 
 
 class Dictogram:
