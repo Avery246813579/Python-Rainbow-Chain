@@ -1,8 +1,8 @@
 from distutils.core import setup
 
 setup(
-    name='rainbow-chain',
-    packages=['Rainbow-Chain'],  # this must be the same as the name above
+    name='rainbow_chain',
+    packages=['Rainbow_Chain'],  # this must be the same as the name above
     version='0.2',
     description='Implementing Middle Out (Indexing) to the Markov Chain',
     author='Avery Durrant',
