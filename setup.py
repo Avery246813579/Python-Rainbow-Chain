@@ -4,12 +4,12 @@ setup(
     name='RainbowChain',
     packages=['RainbowChain'],
     license="MIT License",
-    version='0.1',
+    version='0.1.0',
     description='Implementing Middle Out (Indexing) to the Markov Chain',
     author='Avery Durrant',
     author_email='avery@frostbyte.co',
     url='https://github.com/Avery246813579/Python-Rainbow-Chain',
     download_url='https://github.com/Avery246813579/Python-Rainbow-Chain/0.1',
     keywords=['Markov Chain', 'Middle Out', 'Markov Model'],
-    classifiers=[],
+    classifiers=[]
 )
