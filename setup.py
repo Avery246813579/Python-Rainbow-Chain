@@ -5,7 +5,6 @@ setup(
     packages='RainbowChain',  # this must be the same as the name above
     license="MIT License",
     version='0.4',
-    include_package_data=True,
     description='Implementing Middle Out (Indexing) to the Markov Chain',
     author='Avery Durrant',
     author_email='avery@frostbyte.co',
