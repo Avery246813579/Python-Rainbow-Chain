@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='rainbow_chain',
-    packages=['Rainbow_Chain'],  # this must be the same as the name above
+    packages=['rainbow_chain'],  # this must be the same as the name above
     version='0.1',
     description='Implementing Middle Out (Indexing) to the Markov Chain',
     author='Avery Durrant',
