@@ -6,7 +6,8 @@ setup(
     packages=find_packages('lib'),  # this must be the same as the name above
     package_dir={'': 'lib'},
     license="MIT License",
-    version='0.1',
+    version='0.3',
+    include_package_data=True,
     description='Implementing Middle Out (Indexing) to the Markov Chain',
     author='Avery Durrant',
     author_email='avery@frostbyte.co',
