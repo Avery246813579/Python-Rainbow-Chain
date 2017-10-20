@@ -1,8 +1,5 @@
-__all__ = ['Dictogram', 'FileParser', 'Histogram', 'MarkovModel']
+__all__ = ['Dictogram', 'Histogram', 'MarkovModel']
 
-from . import (
-        Dictogram,
-        Histogram,
-        MarkovModel,
-        FileParser
-    )
+from .Dictogram import Dictogram
+from .Histogram import Histogram
+from .MarkovModel import MarkovModel

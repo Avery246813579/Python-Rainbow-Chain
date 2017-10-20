@@ -1,0 +1,3 @@
+import Dictogram_Tests
+import Histogram_Tests
+import MarkovModel_Tests

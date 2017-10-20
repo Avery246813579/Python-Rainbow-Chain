@@ -30,88 +30,6 @@ class Dictogram:
 
         self.construct_data(self.forwards, order, words, False)
         self.construct_data(self.backwards, order, list(reversed(words)), True)
-        # self.construct_us(words, order)
-
-    def construct_us(self, words, order):
-        orders = []
-        windows = []
-        indexes = []
-
-        reversed_words = list(reversed(words))
-
-        # Go through all orders and construct their information
-        for i in range(1, order + 1):
-            orders.append([dict(), dict()])
-
-            forward_window = deque(words[0: i])
-            backward_window = deque(words[1: i + 1])
-
-            windows.append([forward_window, backward_window])
-            indexes.append(i)
-
-        # Add first word to starting states
-        self.sentence_starts.append(words[0])
-
-        word_length = len(words)
-        while len(words):
-            indexes_length = len(indexes)
-
-            for i in range(indexes_length):
-                index = indexes[i]
-
-                next_word = words[index]
-                backward_word = words[index - order]
-                order_windows = windows[i]
-
-                if len(order_windows[0]) < i + 1:
-                    order_windows[0].append(next_word)
-                    order_windows[1].append(backward_word)
-                    continue
-
-                # If we are in first order and the next word is the end of a sentence list
-                if next_word[-1] == '.':
-                    next_word = next_word[:-1]
-
-                    if i == 1:
-                        # Add the next word to sentence ends
-                        self.sentence_ends.append(next_word)
-
-                        # If we are not at the end of our word list, add our word to start of sentence list
-                        if index + 1 < word_length:
-                            self.sentence_starts.append(words[index + 1])
-
-                # Add for forward chain
-                self.add(orders[i][0], tuple(order_windows[0]), next_word)
-                self.add(orders[i][1], tuple(order_windows[1]), backward_word)
-
-                if words[index][-1] == '.':
-                    windows[i][0].append(next_word)
-                    windows[i][0].popleft()
-                    windows[i][1].append(next_word)
-                    windows[i][1].popleft()
-
-                    self.add(orders[i][0], tuple(order_windows[0]), '[SPLIT]')
-                    self.add(orders[i][1], tuple(order_windows[1]), '[SPLIT]')
-
-                    order_windows[0].clear()
-                    order_windows[1].clear()
-                    continue
-
-                windows[i][0].append(next_word)
-                windows[i][0].popleft()
-                windows[i][1].append(next_word)
-                windows[i][1].popleft()
-
-            # Increment all indexes and if it hits the end we add it to our data
-            for i in range(indexes_length):
-                indexes[i] += 1
-
-                if indexes[i] == word_length:
-                    self.data.insert(0, orders[i])
-                    del indexes[i]
-
-            if 1 > indexes_length:
-                break
 
     def construct_data(self, data, order, words, backward):
         creating = False
@@ -219,29 +137,4 @@ class Dictogram:
         return keys[random.randint(0, len(keys) - 1)]
 
     def __str__(self):
-        to_return = ''
-
-        for i in range(len(self.data)):
-            to_return += str(i) + ' ORDER: \nForward:' + str(self.data[i][0]) + '\nBackward:' + str(self.data[i][0]) + '\n'
-
-        return to_return
-
-        # return str(self.forwards) + '\n' + str(self.backwards)
-
-if __name__ == "__main__":
-    # file_reader = FileParser('static/test_data.txt')
-
-    # test_dict = Dictogram(file_reader.words, 3)
-    # print(test_dict)
-    # print(str(test_dict.sentence_starts))
-    # print(str(test_dict.sentence_ends))
-
-    # with open('data.pickle', 'wb') as handle:
-    #     pickle.dump(test_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-    with open('data.pickle', 'rb') as handle:
-        test_dict = pickle.load(handle)
-        print(test_dict.random_forward_key())
-
-    print("HI")
-
+        return str(self.forwards) + '\n' + str(self.backwards)

@@ -6,12 +6,6 @@ from .FileParser import FileParser
 class MarkovModel:
     """ Basically a Markov Chain that generates sentences. """
 
-    # Maximum amount of characters we allow our sentence to have
-    MAX_TWEET_LENGTH = 140
-
-    # Minimum amount of characters we allow our sentence to have
-    MIN_TWEET_LENGTH = 50
-
     # Max amount of attempts we have to generate a new sentence
     MAX_ITERATION_ATTEMPTS = 100
 
@@ -29,7 +23,7 @@ class MarkovModel:
         for order in range(1, max_order + 1):
             self.dictogram.append(Dictogram(self.parser.words, order))
 
-    def generate_sentence(self, backward=False):
+    def generate_sentence(self, backward=False, min_length=50, max_length=140):
         """ Generates a sentence by first getting a sentence start then getting a random token following that word. We
         then end the sentence once we get to an end token ([NONE]). If the sentence is too small or too long we try
         generating a sentence gain.
@@ -89,7 +83,7 @@ class MarkovModel:
         sentence_length = len(generated_sentence)
 
         # If our sentence is too short or long we return a new sentence
-        if sentence_length > self.MAX_TWEET_LENGTH or sentence_length < self.MIN_TWEET_LENGTH:
+        if sentence_length > max_length or sentence_length < min_length:
             return self.generate_sentence(backward)
 
         # If we are backwards add a period at the end of a sentence
@@ -99,7 +93,7 @@ class MarkovModel:
         # Return our sentence and capitalize it. Also make sure there are no uncalled for None tokens
         return generated_sentence
 
-    def generate_with_seed(self, raw_seed):
+    def generate_with_seed(self, raw_seed, min_length=50, max_length=140):
         seed = list(raw_seed.split())
 
         while len(seed) < self.max_order:
@@ -140,7 +134,7 @@ class MarkovModel:
             forward_length = len(forward_sentence)
 
             # If our sentence is too short or long we return a new sentence
-            if forward_length > self.MAX_TWEET_LENGTH / 2 or forward_length < self.MIN_TWEET_LENGTH / 2:
+            if forward_length > max_length / 2 or forward_length < min_length / 2:
                 return self.generate_with_seed(raw_seed)
 
             backward_window = deque(tuple(reversed(seed)))
@@ -172,28 +166,7 @@ class MarkovModel:
             backward_length = len(backward_sentence)
 
             # If our sentence is too short or long we return a new sentence
-            if backward_length > self.MAX_TWEET_LENGTH / 2 or backward_length < self.MIN_TWEET_LENGTH / 2:
+            if backward_length > max_length / 2 or backward_length < min_length / 2:
                 return self.generate_with_seed(raw_seed)
 
             return backward_sentence + forward_sentence
-
-
-if __name__ == '__main__':
-    # Save with Pickle
-    model = MarkovModel("test_data.txt", 3)
-
-    print("FORWARD:\n")
-    for i in range(10):
-        print(model.generate_sentence())
-
-    print("\n\n\n")
-
-    print("BACKWARD:\n")
-    for i in range(10):
-        print(model.generate_sentence(True))
-
-    print("\n\n\n")
-
-    print("MIDDLE OUT:\n")
-    for i in range(10):
-        print(model.generate_with_seed('America'))
