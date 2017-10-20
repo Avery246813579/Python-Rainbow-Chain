@@ -1,14 +1,14 @@
 from distutils.core import setup
 
 setup(
-    name='Rainbow-Chain',
+    name='rainbow-chain',
     packages=['Rainbow-Chain'],  # this must be the same as the name above
-    version='0.1',
+    version='0.2',
     description='Implementing Middle Out (Indexing) to the Markov Chain',
     author='Avery Durrant',
     author_email='avery@frostbyte.co',
-    url='https://github.com/Avery246813579/Python-Rainbow-Chain',  # use the URL to the github repo
-    download_url='https://github.com/Avery246813579/Python-Rainbow-Chain/archive/0.1.tar.gz',  # I'll explain this in a second
+    url='https://github.com/Avery246813579/Python-Rainbow-Chain',
+    download_url='https://github.com/Avery246813579/Python-Rainbow-Chain/archive/0.2.tar.gz',
     keywords=['Markov Chain', 'Middle Out', 'Markov Model'],
     classifiers=[],
 )
