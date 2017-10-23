@@ -1,5 +1,5 @@
-__all__ = ['Dictogram', 'Histogram', 'MarkovModel']
+__all__ = ['Dictogram', 'Histogram', 'RainbowChain']
 
 from .Dictogram import Dictogram
 from .Histogram import Histogram
-from .MarkovModel import MarkovModel
+from .RainbowChain import RainbowChain

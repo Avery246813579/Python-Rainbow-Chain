@@ -28,10 +28,10 @@ class Dictogram:
         self.sentence_starts = []
         self.sentence_ends = []
 
-        self.construct_data(self.forwards, order, words, False)
-        self.construct_data(self.backwards, order, list(reversed(words)), True)
+        self._construct_data(self.forwards, order, words, False)
+        self._construct_data(self.backwards, order, list(reversed(words)), True)
 
-    def construct_data(self, data, order, words, backward):
+    def _construct_data(self, data, order, words, backward):
         creating = False
 
         words_length = len(words)
@@ -63,19 +63,19 @@ class Dictogram:
 
                 creating = False
 
-            if self.next_item(data, backward, window, current_word):
+            if self._next_item(data, backward, window, current_word):
                 creating = True
                 window.clear()
 
                 if backward:
                     window.appendleft(current_word[:-1])
 
-    def next_item(self, data, backward, window, word):
+    def _next_item(self, data, backward, window, word):
         split = False
 
         if word[-1] == '.':
             if backward:
-                self.next_item(data, backward, window, '[SPLIT]')
+                self._next_item(data, backward, window, '[SPLIT]')
 
                 return True
             else:
@@ -96,7 +96,7 @@ class Dictogram:
 
         # End of Word
         if split:
-            self.next_item(data, backward, window, '[SPLIT]')
+            self._next_item(data, backward, window, '[SPLIT]')
 
             return True
 
@@ -110,7 +110,8 @@ class Dictogram:
         else:
             return self.sentence_starts[random.randint(0, len(self.sentence_starts) - 1)]
 
-    def add(self, data, key, value):
+    @staticmethod
+    def add(data, key, value):
         """ Adds a key-value pair to the data set.
 
          :param key:        The word or phrase that we are currently looking at

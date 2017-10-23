@@ -1,4 +1,7 @@
-import RainbowChain
+from RainbowChain import Dictogram
+words = 'One fish two fish red fish blue fish.'.split()
+
+d = Dictogram(words, 2)
 
 # file_reader = FileParser('static/test_data.txt')
 
@@ -16,4 +19,20 @@ import RainbowChain
 #
 # print("HI")
 
-print("HI MOM")
+
+print(d.backwards)
+# {('fish', 'blue'): Histogram[{'fish': 1}],
+# ('blue', 'fish'): Histogram[{'red': 1}],
+# ('fish', 'red'): Histogram[{'fish': 1}],
+# ('red', 'fish'): Histogram[{'two': 1}],
+# ('fish', 'two'): Histogram[{'fish': 1}],
+# ('two', 'fish'): Histogram[{'One': 1}]}
+
+
+
+# {('two', 'fish'): [Histogram: {'fish': 1}],
+# ('fish', 'red'): [Histogram: {'two': 1}],
+#  ('red', 'fish'): [Histogram: {'fish': 1}],
+# ('fish', 'blue'): [Histogram: {'red': 1, 'fish': 1}]}
+
+

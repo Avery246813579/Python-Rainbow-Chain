@@ -3,7 +3,7 @@ from collections import deque
 from .FileParser import FileParser
 
 
-class MarkovModel:
+class RainbowChain:
     """ Basically a Markov Chain that generates sentences. """
 
     # Max amount of attempts we have to generate a new sentence
