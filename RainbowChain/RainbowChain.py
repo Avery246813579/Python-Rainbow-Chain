@@ -93,7 +93,7 @@ class RainbowChain:
         # Return our sentence and capitalize it. Also make sure there are no uncalled for None tokens
         return generated_sentence
 
-    def generate_with_seed(self, raw_seed, min_length=50, max_length=140):
+    def generate_with_seed(self, raw_seed, min_length=50, max_length=140, depth=0):
         seed = list(raw_seed.split())
 
         while len(seed) < self.max_order:
@@ -138,7 +138,10 @@ class RainbowChain:
 
             # If our sentence is too short or long we return a new sentence
             if forward_length > max_length / 2 or forward_length < min_length / 2:
-                return self.generate_with_seed(raw_seed)
+                if depth > self.MAX_ITERATION_ATTEMPTS:
+                    return None
+
+                return self.generate_with_seed(raw_seed, depth=depth + 1)
 
             backward_window = deque(tuple(reversed(seed)))
             backward_element = self.dictogram[self.max_order - 1].backwards[tuple(reversed(seed))]
@@ -146,7 +149,10 @@ class RainbowChain:
 
             # If the window has a split
             if '[SPLIT]' in backward_sentence:
-                return self.generate_with_seed(raw_seed)
+                if depth > self.MAX_ITERATION_ATTEMPTS:
+                    return None
+
+                return self.generate_with_seed(raw_seed, depth=depth + 1)
 
             for _ in range(self.MAX_ITERATION_ATTEMPTS):
                 word = None
@@ -170,6 +176,9 @@ class RainbowChain:
 
             # If our sentence is too short or long we return a new sentence
             if backward_length > max_length / 2 or backward_length < min_length / 2:
-                return self.generate_with_seed(raw_seed)
+                if depth > self.MAX_ITERATION_ATTEMPTS:
+                    return None
+
+                return self.generate_with_seed(raw_seed, depth=depth + 1)
 
             return backward_sentence + forward_sentence
