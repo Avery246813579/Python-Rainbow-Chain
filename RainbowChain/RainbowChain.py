@@ -97,12 +97,15 @@ class RainbowChain:
         seed = list(raw_seed.split())
 
         while len(seed) < self.max_order:
-            word = self.dictogram[len(seed) - 1].forwards[tuple(seed)].random_word()
+            try:
+                word = self.dictogram[len(seed) - 1].forwards[tuple(seed)].random_word()
 
-            if word == '[SPLIT]':
-                return self.generate_with_seed(raw_seed)
+                if word == '[SPLIT]':
+                    return self.generate_with_seed(raw_seed)
 
-            seed.append(word)
+                seed.append(word)
+            except KeyError:
+                return None
 
         seed = tuple(seed)
 
