@@ -6,136 +6,125 @@ from collections import deque
 
 
 class Dictogram:
-    """ A Dictogram is a custom data type we use to store data for our Markov Chain. We use key (a word or phrase) then
-    a histogram (of following words or phrases) to store our data.
-
-    I refer to key and value a lot during this class. A key is the current word or phrase we are looking at (it can be
-    a word of phrase because of the order we are using). A value is the word or phrase following our current key.
-     """
+    # Don't forget to import deque
+    # from collections import deque
 
     def __init__(self, words, order):
-        """ Constructing the Dictogram
-
-        :param words:       The words you want to add (the corpus)
-        :param order:       The Markov Chain order
-        """
+        self.order = order
 
         self.forwards = dict()
         self.backwards = dict()
-        self.word_count = len(words)
 
-        self.data = []
-        self.sentence_starts = []
+        forwards_state = deque(words[0: order])
+        backwards_state = deque(list(reversed(words[1: 1 + order])))
+
+        self.sentence_starts = [tuple(forwards_state)]
         self.sentence_ends = []
 
-        self._construct_data(self.forwards, order, words, False)
-        self._construct_data(self.backwards, order, list(reversed(words)), True)
+        for i in range(order, len(words)):
+            self.add_forward_word(i, forwards_state, words)
+            self.add_backward_word(i, backwards_state, words)
 
-    def _construct_data(self, data, order, words, backward):
-        creating = False
+        # Don't forget to set our last state to a split
+        self.add(self.forwards, tuple(forwards_state), '[SPLIT]')
 
-        words_length = len(words)
-        window = deque(words[0: order])
+        self.sentence_ends.append(tuple(backwards_state))
+        self.add(self.backwards, tuple(backwards_state), words[len(words) - self.order])
+        self.add(self.backwards, tuple(reversed(words[0:self.order])), '[SPLIT]')
 
-        if backward and window[0][-1] == '.':
-            window[0] = window[0][:-1]
+    def add_forward_word(self, i, forwards_state, words):
+        if len(forwards_state) < self.order:
+            forwards_state.append(words[i])
 
-        # Used to find the start of sentences
-        if backward:
-            self.sentence_ends.append(tuple(window))
-        else:
-            self.sentence_starts.append(tuple(window))
+            if len(forwards_state) == self.order:
+                self.sentence_starts.append(tuple(forwards_state))
 
-        # We loop through all our words and if it has occurred we add the following word to a histogram. If it has not
-        # occurred we construct a new histogram
-        for i in range(order, words_length):
-            current_word = words[i]
+            return
 
-            if len(window) < order:
-                window.append(current_word)
-                continue
+        next_word = words[i]
 
-            if creating:
-                if backward:
-                    self.sentence_ends.append(tuple(window))
-                else:
-                    self.sentence_starts.append(tuple(window))
+        if next_word[-1] == '.':
+            next_word = next_word[:-1]
 
-                creating = False
+        self.add(self.forwards, tuple(forwards_state), next_word)
 
-            if self._next_item(data, backward, window, current_word):
-                creating = True
-                window.clear()
+        forwards_state.popleft()
+        forwards_state.append(next_word)
 
-                if backward:
-                    window.appendleft(current_word[:-1])
+        # If the next word was a sentence end we set the last state equal to a split and clear our window
+        if words[i][-1] == '.':
+            self.add(self.forwards, tuple(forwards_state), '[SPLIT]')
+            forwards_state.clear()
 
-    def _next_item(self, data, backward, window, word):
-        split = False
+    def add_backward_word(self, i, state, words):
+        if i + 2 > len(words):
+            return
 
-        if word[-1] == '.':
-            if backward:
-                self._next_item(data, backward, window, '[SPLIT]')
+        if len(state) < self.order:
+            if words[i - self.order - 1][-1] != '.':
+                return
 
-                return True
-            else:
-                word = word[:-1]
-                split = True
+            for j in range(i - self.order + 1, i + 1):
+                state.appendleft(words[j])
 
-        # Add current data to our Dictogram
-        self.add(data, tuple(window), word)
+            end = []
+            for j in range(i - self.order * 2, i - self.order):
+                word = words[j]
 
-        # Add the next number in the sequence
-        window.append(word)
+                if word[-1] == '.':
+                    word = word[:-1]
 
-        if backward:
-            window.popleft()
-        else:
-            if window.popleft() == '[SPLIT]':
-                data.append(tuple(window))
+                end.append(word)
 
-        # End of Word
-        if split:
-            self._next_item(data, backward, window, '[SPLIT]')
+            to_be_split = []
+            for j in range(i - self.order, i):
+                to_be_split.insert(0, words[j])
 
-            return True
+            self.add(self.backwards, tuple(to_be_split), '[SPLIT]')
+            self.sentence_ends.append(tuple(reversed(end)))
 
-    def random_start(self, backwards=False):
-        """ Finds a random start to our sentence using the end keys list.
+        last_word = words[i - self.order]
 
-        :return:        A key to use in order to construct the start of a sentence
-        """
-        if backwards:
-            return self.sentence_ends[random.randint(0, len(self.sentence_ends) - 1)]
-        else:
-            return self.sentence_starts[random.randint(0, len(self.sentence_starts) - 1)]
+        self.add(self.backwards, tuple(state), last_word)
+
+        next_word = words[i + 1]
+        if next_word[-1] == '.':
+            next_word = next_word[:-1]
+
+        state.pop()
+        state.appendleft(next_word)
+
+        if words[i][-1] == '.':
+            state.clear()
 
     @staticmethod
-    def add(data, key, value):
-        """ Adds a key-value pair to the data set.
+    def add(data, state, next_word):
+        if state not in data:
+            data[state] = Histogram()
 
-         :param key:        The word or phrase that we are currently looking at
-         :param value:      The value is the word or phrase following the key
-         """
+        data[state].update_word(next_word)
 
-        # If the word or phrase has not been said before, we create a new histogram for that word.
-        if key not in data:
-            data[key] = Histogram()
+    def generate_sentence(self):
+        current_state = deque(self.random_start())
+        final_sentence = ''
 
-        # Update the word phrase in the keys histogram
-        data[key].update_word(value)
+        while current_state[-1] != '[SPLIT]':
+            final_sentence += ' ' + current_state[0]
 
-    def random_forward_key(self):
-        """ Gets a random word or phrase from our data set """
-        keys = list(self.forwards.keys())
+            states_histogram = self.forwards[tuple(current_state)]
+            next_word = states_histogram.random_word()
 
-        return keys[random.randint(0, len(keys) - 1)]
+            current_state.popleft()
+            current_state.append(next_word)
 
-    def random_backward_key(self):
-        """ Gets a random word or phrase from our data set """
-        keys = list(self.backwards.keys())
+        # We have to add the last state to the sentence
+        return final_sentence[1:] + ' ' + ' '.join(tuple(current_state)[:-1]) + '.'
 
-        return keys[random.randint(0, len(keys) - 1)]
+    def random_start(self):
+        return self.sentence_starts[random.randint(0, len(self.sentence_starts) - 1)]
+
+    def random_end(self):
+        return self.sentence_ends[random.randint(0, len(self.sentence_ends) - 1)]
 
     def __str__(self):
-        return str(self.forwards) + '\n' + str(self.backwards)
+        return str(self.forwards) + ' \n ' + str(self.backwards)

@@ -17,4 +17,4 @@ print("\n\n\n")
 
 print("MIDDLE OUT:\n")
 for i in range(10):
-    print(model.generate_with_seed('coffee'))
+    print(model.generate_with_seed('Bush'))

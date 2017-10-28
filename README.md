@@ -50,5 +50,6 @@ read it faster. It cut my load time in half.
 ## Todo
 1. Comment and Simplify Code. Add documentation.
 1. Generate lower order sentences
+1. Put sentence start and end into a Histogram
 1. Publish Blog Post
 1. Backoff suggestion since it doesnt work perfectly
