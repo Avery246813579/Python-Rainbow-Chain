@@ -9,7 +9,7 @@ setup(
     author='Avery Durrant',
     author_email='avery@frostbyte.co',
     url='https://github.com/Avery246813579/Python-Rainbow-Chain',
-    download_url='https://github.com/Avery246813579/Python-Rainbow-Chain/0.1.4',
+    download_url='https://github.com/Avery246813579/Python-Rainbow-Chain/0.1.5',
     keywords=['Markov Chain', 'Middle Out', 'Markov Model'],
     classifiers=[]
 )
