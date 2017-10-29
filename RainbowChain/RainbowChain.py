@@ -36,6 +36,10 @@ class RainbowChain:
 
         if backward:
             window = deque(self.dictogram[self.max_order - 1].random_end())
+
+            if tuple(window) not in self.dictogram[self.max_order - 1].backwards:
+                return self.generate_with_seed(backward)
+
             element = self.dictogram[self.max_order - 1].backwards[tuple(window)]
             generated_sentence = ' '.join(list(reversed(window)))
         else:

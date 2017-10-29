@@ -26,7 +26,7 @@ class Histogram:
 
     def random_word(self):
         random_range = random.random()
-        total_word_count = len(self.data)
+        total_word_count = self.word_count
         last_percent = 0
 
         for current_word in self.data:

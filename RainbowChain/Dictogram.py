@@ -28,8 +28,10 @@ class Dictogram:
         # Don't forget to set our last state to a split
         self.add(self.forwards, tuple(forwards_state), '[SPLIT]')
 
-        self.sentence_ends.append(tuple(backwards_state))
-        self.add(self.backwards, tuple(backwards_state), words[len(words) - self.order])
+        if len(backwards_state) == self.order:
+            self.sentence_ends.append(tuple(backwards_state))
+            self.add(self.backwards, tuple(backwards_state), words[len(words) - self.order])
+
         self.add(self.backwards, tuple(reversed(words[0:self.order])), '[SPLIT]')
 
     def add_forward_word(self, i, forwards_state, words):
@@ -65,7 +67,16 @@ class Dictogram:
                 return
 
             for j in range(i - self.order + 1, i + 1):
-                state.appendleft(words[j])
+                state_word = words[j]
+
+                if state_word[-1] == '.':
+                    if len(state) != self.order - 1:
+                        state.clear()
+                        return
+
+                    state_word = state_word[:-1]
+
+                state.insert(0, state_word)
 
             end = []
             for j in range(i - self.order * 2, i - self.order):
@@ -78,7 +89,15 @@ class Dictogram:
 
             to_be_split = []
             for j in range(i - self.order, i):
-                to_be_split.insert(0, words[j])
+                split_word = words[j]
+
+                if split_word[-1] == '.':
+                    split_word = split_word[:-1]
+
+                to_be_split.insert(0, split_word)
+
+            if len(state) < self.order:
+                return
 
             self.add(self.backwards, tuple(to_be_split), '[SPLIT]')
             self.sentence_ends.append(tuple(reversed(end)))
