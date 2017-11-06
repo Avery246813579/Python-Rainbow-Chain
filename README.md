@@ -46,6 +46,9 @@ read it faster. It cut my load time in half.
     with open('static/data/model.pickle', 'rb') as handle:
         model = pickle.load(handle)
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Todo
 1. Comment and Simplify Code. Add documentation.
